@@ -1,5 +1,3 @@
-Arguments
-content:
 # Vaultora Project Setup and Installation Guide
 
 ## Backend Initialization and Dependencies
@@ -25,5 +23,21 @@ The backend was initialized as a Node.js project (configured as an ES module wit
 
 **Why these dependencies are used:**
 *   **`nodemon`**: A development utility that monitors the project directory for file changes and automatically restarts the Node server, greatly improving the developer experience.
-file_path:
-e:\Projects\vaultora\setup.txt
+
+## Frontend Initialization and Dependencies
+
+### 1. Initial Project Setup
+The frontend was initialized using Vite with the React template.
+
+### 2. Core Dependencies
+**Command used:** 
+`npm install react-router-dom axios framer-motion lucide-react @clerk/clerk-react tailwindcss @tailwindcss/vite`
+
+**Why these dependencies are used:**
+*   **`react-router-dom`**: Enables declarative routing in React, used for navigating between different pages/components of the application.
+*   **`axios`**: A promise-based HTTP client for the browser, used to make API requests to the backend server.
+*   **`framer-motion`**: A production-ready motion library for React, used to create smooth animations and transitions for the UI.
+*   **`lucide-react`**: A collection of clean, beautifully crafted SVG icons provided as React components, used for UI iconography.
+*   **`@clerk/clerk-react`**: The official Clerk SDK for React, used to integrate secure user authentication, sign-in/sign-up components, and user management into the frontend.
+*   **`tailwindcss`**: A utility-first CSS framework for rapidly building custom user interfaces directly in the markup.
+*   **`@tailwindcss/vite`**: A Vite plugin for integrating Tailwind CSS V4 seamlessly into the Vite build process.
