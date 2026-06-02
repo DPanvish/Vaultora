@@ -1,33 +1,52 @@
 import { motion } from 'framer-motion';
-import { TrendingUp } from 'lucide-react';
+import { ArrowUpRight, ArrowDownLeft } from 'lucide-react';
 
 const ExpenseOverview = () => {
   return (
     <motion.div 
-      initial={{ opacity: 0, scale: 0.95 }}
-      animate={{ opacity: 1, scale: 1 }}
-      transition={{ duration: 0.5 }}
-      className="col-span-1 md:col-span-2 lg:col-span-3 rounded-2xl bg-gradient-to-br from-indigo-950/40 to-purple-900/20 p-8 border border-indigo-500/20 relative overflow-hidden"
+      initial={{ opacity: 0, y: 30, filter: 'blur(10px)' }}
+      animate={{ opacity: 1, y: 0, filter: 'blur(0px)' }}
+      whileHover={{ y: -4 }}
+      transition={{ duration: 0.6, ease: [0.22, 1, 0.36, 1] }}
+      className="col-span-1 md:col-span-2 lg:col-span-3 rounded-2xl bg-gradient-to-b from-[#0e0e0e] to-[#060606] p-8 border border-white/[0.06] hover:border-violet-500/30 hover:shadow-[0_0_50px_rgba(139,92,246,0.08)] relative overflow-hidden flex flex-col justify-between transition-all duration-500 group cursor-pointer"
     >
-      <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-transparent via-indigo-500 to-transparent opacity-50"></div>
+
+      <div className="absolute -right-20 -bottom-20 w-80 h-80 bg-violet-600/10 rounded-full blur-3xl opacity-40 group-hover:opacity-70 transition-opacity duration-700 pointer-events-none"></div>
       
-      <h2 className="text-indigo-200/80 mb-2 font-medium">Total Expenses (This Month)</h2>
-      <div className="text-5xl font-extrabold text-white tracking-tighter mb-6 flex items-center gap-4">
-        ₹42,500
-        <span className="text-sm font-medium px-3 py-1 rounded-full bg-red-500/10 text-red-400 border border-red-500/20 flex items-center gap-1">
-          <TrendingUp size={14} /> +12%
-        </span>
+      <div className="absolute top-0 left-0 w-full h-[1px] bg-gradient-to-r from-transparent via-violet-500/30 to-transparent group-hover:via-violet-400/60 transition-all duration-500"></div>
+      
+      <div className="relative z-10 flex flex-col md:flex-row justify-between items-start md:items-center gap-4 mb-12">
+        <div>
+          <h2 className="text-gray-400 text-xs tracking-wider uppercase mb-2 group-hover:text-gray-300 transition-colors">Total Expenses (This Month)</h2>
+          <div className="text-6xl font-display font-bold text-white tracking-tighter group-hover:scale-[1.01] origin-left transition-transform duration-300">
+            ₹42,500
+          </div>
+        </div>
+        <div className="px-3 py-1.5 rounded-full bg-rose-500/5 border border-rose-500/20 text-xs font-semibold text-rose-400 backdrop-blur-md shadow-[0_0_15px_rgba(244,63,94,0.1)] flex items-center gap-1">
+          <span className="w-1.5 h-1.5 rounded-full bg-rose-500 animate-pulse"></span>
+          +12.4% vs Last Month
+        </div>
       </div>
 
-      <div className="flex gap-8 text-sm">
-        <div>
-          <span className="text-gray-500 block mb-1">Total Income</span>
-          <span className="text-emerald-400 font-semibold text-lg">₹1,20,000</span>
+      <div className="relative z-10 grid grid-cols-2 gap-8 border-t border-white/[0.04] pt-6 group-hover:border-white/[0.08] transition-colors duration-500">
+        <div className="flex items-center gap-3 group/item">
+          <div className="p-2 rounded-xl bg-emerald-500/5 border border-emerald-500/10 text-emerald-400 group-hover/item:bg-emerald-500/10 group-hover/item:scale-110 transition-all duration-300">
+            <ArrowDownLeft size={16} />
+          </div>
+          <div>
+            <span className="text-gray-500 text-xs tracking-wider uppercase block mb-0.5">Total Income</span>
+            <span className="text-white font-display text-xl font-medium tracking-tight group-hover:text-emerald-400 transition-colors duration-300">₹1,20,000</span>
+          </div>
         </div>
-        <div className="w-px h-10 bg-white/10"></div>
-        <div>
-          <span className="text-gray-500 block mb-1">Net Savings</span>
-          <span className="text-blue-400 font-semibold text-lg">₹77,500</span>
+        
+        <div className="flex items-center gap-3 group/item">
+          <div className="p-2 rounded-xl bg-blue-500/5 border border-blue-500/10 text-blue-400 group-hover/item:bg-blue-500/10 group-hover/item:scale-110 transition-all duration-300">
+            <ArrowUpRight size={16} />
+          </div>
+          <div>
+            <span className="text-gray-500 text-xs tracking-wider uppercase block mb-0.5">Net Savings</span>
+            <span className="text-white font-display text-xl font-medium tracking-tight group-hover:text-blue-400 transition-colors duration-300">₹77,500</span>
+          </div>
         </div>
       </div>
     </motion.div>
