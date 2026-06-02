@@ -3,6 +3,8 @@ import dotenv from 'dotenv';
 import cors from 'cors';
 import { clerkMiddleware, requireAuth } from '@clerk/express';
 import { connectDB } from './config/db.js';
+import transactionRouter from './routes/transaction.route.js';
+import exportRouter from './routes/export.route.js';
 
 dotenv.config();
 
@@ -21,6 +23,10 @@ app.use(clerkMiddleware());
 app.get('/', (req, res) => {
   res.send('Vaultora API is running...');
 });
+
+// Routes
+app.use('/api/transactions', transactionRouter);
+app.use('/api/export', exportRouter);
 
 
 const PORT = process.env.PORT || 5000;
