@@ -1,0 +1,29 @@
+Arguments
+content:
+# Vaultora Project Setup and Installation Guide
+
+## Backend Initialization and Dependencies
+
+### 1. Initial Project Setup
+The backend was initialized as a Node.js project (configured as an ES module with `"type": "module"`).
+
+### 2. Core Dependencies
+**Command used:** 
+`npm install express mongoose dotenv cors @clerk/express json2csv`
+
+**Why these dependencies are used:**
+*   **`express`**: A minimalist web framework for Node.js, used to create the backend server and handle API routing.
+*   **`mongoose`**: An Object Data Modeling (ODM) library for MongoDB, used to structure database schemas and interact with the database.
+*   **`dotenv`**: Loads environment variables from a `.env` file into `process.env`, allowing secure management of configuration and secrets.
+*   **`cors`**: Express middleware that enables Cross-Origin Resource Sharing, allowing the frontend application to communicate with the backend API securely.
+*   **`@clerk/express`**: The official Clerk SDK for Express.js, used to implement secure user authentication, authorization, and session management.
+*   **`json2csv`**: A library to convert JSON data (such as user transactions) into CSV format, facilitating data export functionalities.
+
+### 3. Development Dependencies
+**Command used:** 
+`npm install -D nodemon`
+
+**Why these dependencies are used:**
+*   **`nodemon`**: A development utility that monitors the project directory for file changes and automatically restarts the Node server, greatly improving the developer experience.
+file_path:
+e:\Projects\vaultora\setup.txt
