@@ -9,11 +9,14 @@ export const exportTransactions = async(req, res) => {
 
     try{
         const query = {userId};
-        if(startDate && endDate){
-            query.date = {
-                $gte: new Date(startDate),
-                $lte: new Date(endDate)
-            };
+        if(startDate || endDate){
+            query.date = {};
+            if(startDate){ 
+                query.date.$gte = new Date(startDate);
+            }
+            if(endDate){
+                query.date.$lte = new Date(endDate);
+            }
         }
 
         const transactions = await Transaction.find(query)
@@ -39,6 +42,8 @@ export const exportTransactions = async(req, res) => {
 
         res.header('Content-Type', 'text/csv');
         res.attachment(`Vaultora_Export_${new Date().toISOString().split('T')[0]}.csv`);
+
+        res.send(csv);
     }catch(error){
         res.status(500).json({error: error.message});
     }
