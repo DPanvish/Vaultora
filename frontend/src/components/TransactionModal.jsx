@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { X, Wallet, Tag, AlignLeft, IndianRupee } from 'lucide-react';
+import CustomDropdown from './CustomDropdown'; 
 
 const TransactionModal = ({ isOpen, onClose }) => {
   const [formData, setFormData] = useState({
@@ -17,7 +18,6 @@ const TransactionModal = ({ isOpen, onClose }) => {
   const handleSubmit = (e) => {
     e.preventDefault();
     console.log("Transaction Data:", formData);
-
     onClose();
   };
 
@@ -25,7 +25,6 @@ const TransactionModal = ({ isOpen, onClose }) => {
     <AnimatePresence>
       {isOpen && (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
-          {/* Backdrop */}
           <motion.div
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
@@ -34,7 +33,6 @@ const TransactionModal = ({ isOpen, onClose }) => {
             className="absolute inset-0 bg-black/60 backdrop-blur-sm"
           />
 
-          {/* Modal Content */}
           <motion.div
             initial={{ scale: 0.95, opacity: 0, y: 20 }}
             animate={{ scale: 1, opacity: 1, y: 0 }}
@@ -42,18 +40,13 @@ const TransactionModal = ({ isOpen, onClose }) => {
             transition={{ type: 'spring', damping: 25, stiffness: 300 }}
             className="relative w-full max-w-md bg-[#0A0A0A] border border-white/[0.08] rounded-2xl shadow-[0_0_50px_rgba(0,0,0,0.5)] overflow-hidden"
           >
-            {/* Header */}
             <div className="flex items-center justify-between p-6 border-b border-white/[0.04]">
               <h2 className="text-lg font-semibold text-white tracking-tight">Log Transaction</h2>
-              <button 
-                onClick={onClose}
-                className="p-2 rounded-xl text-gray-500 hover:text-white hover:bg-white/[0.05] transition-colors"
-              >
+              <button onClick={onClose} className="p-2 rounded-xl text-gray-500 hover:text-white hover:bg-white/[0.05] transition-colors">
                 <X size={18} />
               </button>
             </div>
 
-            {/* Form */}
             <form onSubmit={handleSubmit} className="p-6 space-y-6">
               
               {/* Type Toggle */}
@@ -70,7 +63,6 @@ const TransactionModal = ({ isOpen, onClose }) => {
                     {type}
                   </button>
                 ))}
-                {/* Active Pill Animation */}
                 <motion.div
                   className={`absolute top-1 bottom-1 w-[calc(50%-4px)] rounded-lg ${formData.type === 'EXPENSE' ? 'bg-rose-500/20 border border-rose-500/30' : 'bg-emerald-500/20 border border-emerald-500/30'}`}
                   initial={false}
@@ -97,38 +89,27 @@ const TransactionModal = ({ isOpen, onClose }) => {
                 </div>
               </div>
 
-              {/* Category & Account Grid */}
+              {/* Custom Dropdowns inside Grid */}
               <div className="grid grid-cols-2 gap-4">
                 <div>
                   <label className="text-xs tracking-wider text-gray-500 uppercase mb-2 block">Category</label>
-                  <div className="relative">
-                    <select 
-                      required
-                      value={formData.category}
-                      onChange={(e) => setFormData({ ...formData, category: e.target.value })}
-                      className="w-full bg-[#050505] border border-white/[0.06] rounded-xl py-3 px-4 text-gray-300 text-sm focus:outline-none focus:border-violet-500/50 appearance-none cursor-pointer"
-                    >
-                      <option value="" disabled>Select...</option>
-                      {categories.map(cat => <option key={cat} value={cat}>{cat}</option>)}
-                    </select>
-                    <Tag size={14} className="absolute right-4 top-3.5 text-gray-600 pointer-events-none" />
-                  </div>
+                  <CustomDropdown 
+                    options={categories}
+                    value={formData.category}
+                    onChange={(val) => setFormData({ ...formData, category: val })}
+                    placeholder="Select..."
+                    icon={Tag}
+                  />
                 </div>
-
                 <div>
                   <label className="text-xs tracking-wider text-gray-500 uppercase mb-2 block">Wallet</label>
-                  <div className="relative">
-                    <select 
-                      required
-                      value={formData.account}
-                      onChange={(e) => setFormData({ ...formData, account: e.target.value })}
-                      className="w-full bg-[#050505] border border-white/[0.06] rounded-xl py-3 px-4 text-gray-300 text-sm focus:outline-none focus:border-violet-500/50 appearance-none cursor-pointer"
-                    >
-                      <option value="" disabled>Select...</option>
-                      {accounts.map(acc => <option key={acc} value={acc}>{acc}</option>)}
-                    </select>
-                    <Wallet size={14} className="absolute right-4 top-3.5 text-gray-600 pointer-events-none" />
-                  </div>
+                  <CustomDropdown 
+                    options={accounts}
+                    value={formData.account}
+                    onChange={(val) => setFormData({ ...formData, account: val })}
+                    placeholder="Select..."
+                    icon={Wallet}
+                  />
                 </div>
               </div>
 
