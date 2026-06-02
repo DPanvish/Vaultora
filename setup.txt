@@ -9,7 +9,7 @@ The backend was initialized as a Node.js project (configured as an ES module wit
 
 ### 2. Core Dependencies
 **Command used:** 
-`npm install express mongoose dotenv cors @clerk/express`
+`npm install express mongoose dotenv cors @clerk/express json2csv`
 
 **Why these dependencies are used:**
 *   **`express`**: A minimalist web framework for Node.js, used to create the backend server and handle API routing.
@@ -17,6 +17,7 @@ The backend was initialized as a Node.js project (configured as an ES module wit
 *   **`dotenv`**: Loads environment variables from a `.env` file into `process.env`, allowing secure management of configuration and secrets.
 *   **`cors`**: Express middleware that enables Cross-Origin Resource Sharing, allowing the frontend application to communicate with the backend API securely.
 *   **`@clerk/express`**: The official Clerk SDK for Express.js, used to implement secure user authentication, authorization, and session management.
+*   **`json2csv`**: A library to convert JSON data (such as user transactions) into CSV format, facilitating data export functionalities.
 
 ### 3. Development Dependencies
 **Command used:** 
