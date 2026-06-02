@@ -1,15 +1,17 @@
 import { useState } from 'react';
 import { UserButton } from "@clerk/clerk-react";
-import { Plus, Download, Calendar } from 'lucide-react';
+import { Plus, Download } from 'lucide-react';
 import { motion } from 'framer-motion';
 import ExpenseOverview from './ExpenseOverview';
 import BalanceCard from './BalanceCard';
 import TransactionModal from './TransactionModal';
-import ExpenseChart from './ExpenseChart'; // Import Chart
+import ExpenseChart from './ExpenseChart';
+import CalendarPicker from './CalendarPicker';
 
 const Dashboard = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [activeRange, setActiveRange] = useState('1 Month');
+  const [selectedDate, setSelectedDate] = useState(null);
 
   const ranges = ['Today', '7 Days', '1 Month', '6 Months', '1 Year', 'Overall'];
 
@@ -19,8 +21,23 @@ const Dashboard = () => {
     { _id: '3', name: 'Pocket Cash', balance: 1500, type: 'CASH' },
   ];
 
+  const handleRangeClick = (range) => {
+    setActiveRange(range);
+    setSelectedDate(null); 
+  };
+
+  const handleDateSelect = (date) => {
+    setSelectedDate(date);
+    if (date) {
+      setActiveRange(null); 
+    } else {
+      setActiveRange('1 Month'); 
+    }
+  };
+
   return (
     <div className="p-4 md:p-8 max-w-6xl mx-auto w-full pt-12">
+      {/* HEADER SECTION */}
       <header className="flex flex-col sm:flex-row justify-between items-start sm:items-end mb-10 border-b border-white/[0.04] pb-8 gap-6">
         <div>
           <h1 className="text-2xl font-semibold text-white tracking-tight">Vaultora</h1>
@@ -56,13 +73,14 @@ const Dashboard = () => {
       </header>
 
       {/* FILTER BAR SECTION */}
-      <div className="flex flex-col md:flex-row justify-between items-center mb-6 gap-3">
+      <div className="flex flex-col md:flex-row justify-between items-center mb-6 gap-4">
+        
         {/* Time Ranges Segmented Control */}
         <div className="flex p-1 bg-white/[0.02] border border-white/[0.04] rounded-xl overflow-x-auto max-w-full custom-scrollbar relative">
           {ranges.map((range) => (
             <button
               key={range}
-              onClick={() => setActiveRange(range)}
+              onClick={() => handleRangeClick(range)}
               className="relative px-5 py-2 text-xs font-medium tracking-wide whitespace-nowrap transition-colors z-10"
             >
               <span className={`relative z-10 ${activeRange === range ? 'text-white' : 'text-gray-500 hover:text-gray-300'}`}>
@@ -79,11 +97,12 @@ const Dashboard = () => {
           ))}
         </div>
 
-        {/* Calendar Picker Trigger */}
-        <button className="flex items-center gap-2 px-4 py-2 text-xs font-medium text-gray-400 bg-[#050505] border border-white/[0.06] rounded-xl hover:text-white hover:border-white/[0.15] transition-all">
-          <Calendar size={14} />
-          <span>Specific Date</span>
-        </button>
+        {/* Calendar Picker */}
+        <CalendarPicker 
+          selectedDate={selectedDate} 
+          onSelectDate={handleDateSelect} 
+        />
+        
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-5">
@@ -97,7 +116,6 @@ const Dashboard = () => {
             type={acc.type}
           />
         ))}
-        {/* The New Chart Area */}
         <ExpenseChart />
       </div>
 
