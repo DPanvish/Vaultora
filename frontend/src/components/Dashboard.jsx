@@ -1,10 +1,14 @@
+import { useState } from 'react';
 import { UserButton } from "@clerk/clerk-react";
 import { Plus, Download } from 'lucide-react';
 import { motion } from 'framer-motion';
 import ExpenseOverview from './ExpenseOverview';
 import BalanceCard from './BalanceCard';
+import TransactionModal from './TransactionModal';
 
 const Dashboard = () => {
+  const [isModalOpen, setIsModalOpen] = useState(false);
+
   const dummyAccounts = [
     { _id: '1', name: 'HDFC Bank', balance: 45000, type: 'BANK' },
     { _id: '2', name: 'SBI Bank', balance: 32000, type: 'BANK' },
@@ -30,6 +34,7 @@ const Dashboard = () => {
           </motion.button>
 
           <motion.button 
+            onClick={() => setIsModalOpen(true)} 
             whileHover={{ scale: 1.02, y: -1, boxShadow: '0 0 25px rgba(139,92,246,0.4)' }}
             whileTap={{ scale: 0.98 }}
             className="flex items-center gap-2 px-4 py-2 text-xs font-semibold tracking-wider text-white uppercase rounded-xl bg-violet-600 border border-violet-500 shadow-[0_0_20px_rgba(139,92,246,0.2)] hover:bg-violet-500 transition-all duration-300 cursor-pointer"
@@ -58,6 +63,11 @@ const Dashboard = () => {
           />
         ))}
       </div>
+
+      <TransactionModal 
+        isOpen={isModalOpen} 
+        onClose={() => setIsModalOpen(false)} 
+      />
     </div>
   );
 };
