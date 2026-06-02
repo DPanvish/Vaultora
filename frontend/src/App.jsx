@@ -1,15 +1,7 @@
-import { SignedIn, SignedOut, SignIn, UserButton } from "@clerk/clerk-react";
+import { SignedIn, SignedOut, SignIn } from "@clerk/clerk-react";
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
+import Dashboard from "./components/Dashboard";
 
-const Dashboard = () => (
-  <div className="p-8">
-    <header className="flex justify-between items-center mb-12">
-      <h1 className="text-3xl font-bold text-white tracking-tight">Vaultora</h1>
-      <UserButton />
-    </header>
-    <div className="text-gray-400">Your premium dashboard is loading...</div>
-  </div>
-);
 
 function App() {
   return (
