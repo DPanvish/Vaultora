@@ -8,6 +8,7 @@ import TransactionModal from './TransactionModal';
 import ExpenseChart from './ExpenseChart';
 import CalendarPicker from './CalendarPicker';
 import Onboarding from './Onboarding';
+import TransactionList from './TransactionList';
 import { useDashboardData, useAccounts } from '../hooks/useFinance';
 
 const Dashboard = () => {
@@ -65,6 +66,35 @@ const Dashboard = () => {
     }
   };
 
+  const handleExportCSV = () => {
+    if (!transactions || transactions.length === 0) {
+      alert("No data to export for this period.");
+      return;
+    }
+    
+    const headers = ['Date,Type,Category,Wallet,Amount,Description'];
+    
+    const csvData = transactions.map(tx => {
+      const date = new Date(tx.date).toLocaleDateString('en-US');
+      const walletName = tx.account?.name || 'Unknown';
+      const desc = `"${(tx.description || '').replace(/"/g, '""')}"`; 
+      
+      return `${date},${tx.type},${tx.category},${walletName},${tx.amount},${desc}`;
+    });
+
+    const csvString = [headers, ...csvData].join('\n');
+    const blob = new Blob([csvString], { type: 'text/csv;charset=utf-8;' });
+    const url = window.URL.createObjectURL(blob);
+    const link = document.createElement('a');
+    
+    link.href = url;
+    link.setAttribute('download', `Vaultora_Ledger_${activeRange || 'Specific_Date'}.csv`);
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+    window.URL.revokeObjectURL(url);
+  };
+
   if (isLoadingTx || isLoadingAcc) {
     return (
       <div className="min-h-screen flex items-center justify-center bg-[#050505]">
@@ -94,6 +124,7 @@ const Dashboard = () => {
         
         <div className="flex items-center gap-4 self-end sm:self-auto">
           <motion.button 
+            onClick={handleExportCSV}
             whileHover={{ scale: 1.02, y: -1 }}
             whileTap={{ scale: 0.98 }}
             className="flex items-center gap-2 px-4 py-2 text-xs font-semibold tracking-wider text-gray-400 uppercase rounded-xl border border-white/[0.06] bg-white/[0.01] hover:bg-white/[0.04] hover:text-white hover:border-white/[0.12] transition-all duration-300 cursor-pointer"
@@ -167,6 +198,8 @@ const Dashboard = () => {
 
         <ExpenseChart data={chartData} />
       </div>
+
+      <TransactionList transactions={transactions} />
 
       <TransactionModal isOpen={isModalOpen} onClose={() => setIsModalOpen(false)} />
     </div>

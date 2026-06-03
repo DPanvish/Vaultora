@@ -66,15 +66,35 @@ export const createTransaction = async (req, res) => {
 export const getTransactions = async (req, res) => {
     try {
         const { userId } = getAuth(req);
+        const { range, date } = req.query;
 
         if (!userId) {
             return res.status(401).json({ error: "Unauthorized: Missing Clerk User ID" });
         }
 
-        const transactions = await Transaction.find({ userId })
+        let query = { userId };
+
+        if (date) {
+            const targetDate = new Date(date);
+            const startOfDay = new Date(targetDate.setHours(0, 0, 0, 0));
+            const endOfDay = new Date(targetDate.setHours(23, 59, 59, 999));
+            query.date = { $gte: startOfDay, $lte: endOfDay };
+        } else if (range && range !== 'Overall') {
+            const now = new Date();
+            let startDate = new Date();
+            
+            if (range === 'Today') startDate.setHours(0, 0, 0, 0);
+            else if (range === '7 Days') startDate.setDate(now.getDate() - 7);
+            else if (range === '1 Month') startDate.setMonth(now.getMonth() - 1);
+            else if (range === '6 Months') startDate.setMonth(now.getMonth() - 6);
+            else if (range === '1 Year') startDate.setFullYear(now.getFullYear() - 1);
+            
+            query.date = { $gte: startDate };
+        }
+
+        const transactions = await Transaction.find(query)
             .populate("account", "name") 
-            .sort({ date: -1 })
-            .limit(50);
+            .sort({ date: -1 }); 
 
         res.status(200).json(transactions);
     } catch (error) {
