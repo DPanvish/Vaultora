@@ -1,0 +1,40 @@
+import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
+import { useAuth } from '@clerk/clerk-react';
+import { api } from "../lib/api"
+
+
+export const useDashboardData = (filters) => {
+  const { getToken } = useAuth();
+
+  return useQuery({
+    queryKey: ['dashboard', filters], 
+    queryFn: async () => {
+      const token = await getToken();
+      const { data } = await api.get('/transactions', {
+        headers: { Authorization: `Bearer ${token}` },
+        params: filters,
+      });
+      return data;
+    },
+    enabled: !!getToken, 
+  });
+};
+
+
+export const useAddTransaction = () => {
+  const { getToken } = useAuth();
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: async (transactionData) => {
+      const token = await getToken();
+      const { data } = await api.post('/transactions', transactionData, {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+      return data;
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['dashboard'] });
+    },
+  });
+};

@@ -1,24 +1,44 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { X, Wallet, Tag, AlignLeft, IndianRupee } from 'lucide-react';
-import CustomDropdown from './CustomDropdown'; 
+import { X, Wallet, Tag, AlignLeft, IndianRupee, Loader2 } from 'lucide-react';
+import CustomDropdown from './CustomDropdown';
+import { useAddTransaction } from '../hooks/useFinance';
 
 const TransactionModal = ({ isOpen, onClose }) => {
-  const [formData, setFormData] = useState({
+  const initialFormState = {
     type: 'EXPENSE',
     amount: '',
     category: '',
     account: '',
     description: ''
-  });
+  };
+
+  const [formData, setFormData] = useState(initialFormState);
+
+  const { mutate: addTransaction, isPending } = useAddTransaction();
+
+  useEffect(() => {
+    if (isOpen) {
+      setFormData(initialFormState);
+    }
+  }, [isOpen]);
 
   const categories = ['Rent', 'Groceries', 'Utilities', 'Salary', 'Leisure'];
   const accounts = ['HDFC Bank', 'SBI Bank', 'Pocket Cash'];
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    console.log("Transaction Data:", formData);
-    onClose();
+    addTransaction({
+      ...formData,
+      amount: Number(formData.amount) 
+    }, {
+      onSuccess: () => {
+        onClose(); 
+      },
+      onError: (error) => {
+        console.error("Failed to save transaction:", error);
+      }
+    });
   };
 
   return (
@@ -89,7 +109,7 @@ const TransactionModal = ({ isOpen, onClose }) => {
                 </div>
               </div>
 
-              {/* Custom Dropdowns inside Grid */}
+              {/* Custom Dropdowns */}
               <div className="grid grid-cols-2 gap-4">
                 <div>
                   <label className="text-xs tracking-wider text-gray-500 uppercase mb-2 block">Category</label>
@@ -133,9 +153,17 @@ const TransactionModal = ({ isOpen, onClose }) => {
               {/* Submit Button */}
               <button 
                 type="submit"
-                className="w-full py-3.5 rounded-xl bg-violet-600 text-white font-semibold tracking-wide shadow-[0_0_20px_rgba(139,92,246,0.3)] hover:bg-violet-500 hover:shadow-[0_0_30px_rgba(139,92,246,0.5)] transition-all duration-300"
+                disabled={isPending}
+                className="w-full py-3.5 rounded-xl bg-violet-600 text-white font-semibold tracking-wide shadow-[0_0_20px_rgba(139,92,246,0.3)] hover:bg-violet-500 hover:shadow-[0_0_30px_rgba(139,92,246,0.5)] transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
               >
-                Confirm Transaction
+                {isPending ? (
+                  <>
+                    <Loader2 size={18} className="animate-spin" />
+                    Processing...
+                  </>
+                ) : (
+                  'Confirm Transaction'
+                )}
               </button>
             </form>
           </motion.div>

@@ -41,3 +41,11 @@ The frontend was initialized using Vite with the React template.
 *   **`@clerk/clerk-react`**: The official Clerk SDK for React, used to integrate secure user authentication, sign-in/sign-up components, and user management into the frontend.
 *   **`tailwindcss`**: A utility-first CSS framework for rapidly building custom user interfaces directly in the markup.
 *   **`@tailwindcss/vite`**: A Vite plugin for integrating Tailwind CSS V4 seamlessly into the Vite build process.
+
+### 3. Data Fetching and Visualization Dependencies
+**Command used:** 
+`npm install @tanstack/react-query recharts`
+
+**Why these dependencies are used:**
+*   **`@tanstack/react-query`**: A powerful asynchronous state management library for React, used for declarative data fetching, caching, and updating of server state.
+*   **`recharts`**: A composable charting library built on React components, used to create data visualizations like the expense trends chart.
