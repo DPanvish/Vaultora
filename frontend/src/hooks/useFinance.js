@@ -38,3 +38,21 @@ export const useAddTransaction = () => {
     },
   });
 };
+
+
+export const useAccounts = () => {
+  const { getToken } = useAuth();
+
+  return useQuery({
+    queryKey: ['accounts'],
+    queryFn: async () => {
+      const token = await getToken();
+      // Assuming you create a quick GET /api/accounts route on your backend
+      const { data } = await api.get('/accounts', {
+        headers: { Authorization: `Bearer ${token}` }
+      });
+      return data;
+    },
+    enabled: !!getToken,
+  });
+};
