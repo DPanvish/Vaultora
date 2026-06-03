@@ -1,11 +1,12 @@
 import { Parser } from "json2csv"
+import { getAuth } from "@clerk/express";
 import { Transaction } from "../models/Transaction.model.js";
 
 // @desc      Export transactions to CSV
 // @route     GET /api/export/csv
 export const exportTransactions = async(req, res) => {
     const {startDate, endDate} = req.query;
-    const userId = req.auth.userId;
+    const { userId } = getAuth(req);
 
     try{
         const query = {userId};

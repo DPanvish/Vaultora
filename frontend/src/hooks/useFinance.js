@@ -56,3 +56,32 @@ export const useAccounts = () => {
     enabled: !!getToken,
   });
 };
+
+
+export const useSetupAccounts = () => {
+  const { getToken } = useAuth();
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: async (accounts) => {
+      const token = await getToken();
+
+      console.log("My Clerk Token is:", token); 
+      
+      if(!token){
+        throw new Error("Frontend failed to generate a Clerk token.");
+      }
+
+      const { data } = await api.post('/accounts/bulk', { accounts }, {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+      return data;
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['accounts'] });
+    },
+    onError: (error) => {
+      console.error("Frontend caught error:", error.response?.data || error.message);
+    }
+  });
+};

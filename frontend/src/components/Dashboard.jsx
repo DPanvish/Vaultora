@@ -7,6 +7,7 @@ import BalanceCard from './BalanceCard';
 import TransactionModal from './TransactionModal';
 import ExpenseChart from './ExpenseChart';
 import CalendarPicker from './CalendarPicker';
+import Onboarding from './Onboarding';
 import { useDashboardData, useAccounts } from '../hooks/useFinance';
 
 const Dashboard = () => {
@@ -68,6 +69,17 @@ const Dashboard = () => {
     return (
       <div className="min-h-screen flex items-center justify-center bg-[#050505]">
         <Loader2 className="w-8 h-8 text-violet-500 animate-spin" />
+      </div>
+    );
+  }
+
+  if (accounts.length === 0) {
+    return (
+      <div className="min-h-screen bg-[#050505] flex flex-col font-sans">
+        <div className="absolute inset-0 opacity-20 pointer-events-none filter blur-xl">
+          <div className="max-w-6xl mx-auto w-full pt-12 h-full border border-white/5" />
+        </div>
+        <Onboarding />
       </div>
     );
   }

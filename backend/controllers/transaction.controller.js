@@ -1,5 +1,5 @@
 import mongoose from "mongoose";
-import { requireAuth} from "@clerk/express";
+import { getAuth } from "@clerk/express";
 import { Transaction } from "../models/Transaction.model.js";
 import { Account } from "../models/Account.model.js";
 
@@ -7,7 +7,7 @@ import { Account } from "../models/Account.model.js";
 // @route     POST /api/transactions
 export const createTransaction = async(req, res) => {
     const { amount, type, description, category, account, date } = req.body;
-    const userId = req.auth.userId;
+    const { userId } = getAuth(req);
 
     const session = await mongoose.startSession();
     session.startTransaction();
@@ -53,7 +53,8 @@ export const createTransaction = async(req, res) => {
 // @route     GET /api/transactions
 export const getTransactions = async(req, res) => {
     try{
-        const transactions = await Transaction.find({userId: req.auth.userId})
+        const { userId } = getAuth(req);
+        const transactions = await Transaction.find({userId})
             .populate("category", "name")
             .populate("account", "name")
             .sort({date: -1})
