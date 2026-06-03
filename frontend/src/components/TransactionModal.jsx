@@ -1,43 +1,72 @@
 import { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { X, Wallet, Tag, AlignLeft, IndianRupee, Loader2 } from 'lucide-react';
+import { X, Wallet, Tag, AlignLeft, IndianRupee, Loader2, Plus, Check } from 'lucide-react';
 import CustomDropdown from './CustomDropdown';
-import { useAddTransaction } from '../hooks/useFinance';
+import { useAddTransaction, useAccounts } from '../hooks/useFinance'; 
 
 const TransactionModal = ({ isOpen, onClose }) => {
   const initialFormState = {
     type: 'EXPENSE',
     amount: '',
     category: '',
-    account: '',
+    account: '', 
     description: ''
   };
 
   const [formData, setFormData] = useState(initialFormState);
+  
+  const [customCategories, setCustomCategories] = useState([]);
+  const [isAddingCustom, setIsAddingCustom] = useState(false);
+  const [newCategoryName, setNewCategoryName] = useState('');
 
-  const { mutate: addTransaction, isPending } = useAddTransaction();
+  const { data: accountsData = [] } = useAccounts();
+  const accountNames = accountsData.map(acc => acc.name);
+
+  const { mutate: addTransaction, isPending } = useAddTransaction(); 
 
   useEffect(() => {
     if (isOpen) {
       setFormData(initialFormState);
+      setIsAddingCustom(false);
+      setNewCategoryName('');
+      document.body.style.overflow = 'hidden'; 
+    } else {
+      document.body.style.overflow = 'unset'; 
     }
+    return () => { document.body.style.overflow = 'unset'; }
   }, [isOpen]);
 
-  const categories = ['Rent', 'Groceries', 'Utilities', 'Salary', 'Leisure'];
-  const accounts = ['HDFC Bank', 'SBI Bank', 'Pocket Cash'];
+  const defaultCategories = ['Rent', 'Groceries', 'Utilities', 'Salary', 'Leisure'];
+  const allCategories = [...defaultCategories, ...customCategories]; 
+
+  const handleAddCustomCategory = () => {
+    if (newCategoryName.trim() !== '') {
+      const formattedName = newCategoryName.trim();
+      if (!allCategories.includes(formattedName)) {
+        setCustomCategories([...customCategories, formattedName]);
+      }
+      setFormData({ ...formData, category: formattedName }); 
+      setNewCategoryName('');
+      setIsAddingCustom(false);
+    }
+  };
 
   const handleSubmit = (e) => {
     e.preventDefault();
+
+    const selectedAccountObj = accountsData.find(acc => acc.name === formData.account);
+
+    if (!selectedAccountObj) {
+      console.error("Please select a valid wallet.");
+      return;
+    }
+
     addTransaction({
       ...formData,
-      amount: Number(formData.amount) 
+      amount: Number(formData.amount),
+      account: selectedAccountObj._id 
     }, {
-      onSuccess: () => {
-        onClose(); 
-      },
-      onError: (error) => {
-        console.error("Failed to save transaction:", error);
-      }
+      onSuccess: () => onClose()
     });
   };
 
@@ -58,7 +87,7 @@ const TransactionModal = ({ isOpen, onClose }) => {
             animate={{ scale: 1, opacity: 1, y: 0 }}
             exit={{ scale: 0.95, opacity: 0, y: 10 }}
             transition={{ type: 'spring', damping: 25, stiffness: 300 }}
-            className="relative w-full max-w-md bg-[#0A0A0A] border border-white/[0.08] rounded-2xl shadow-[0_0_50px_rgba(0,0,0,0.5)] overflow-hidden"
+            className="relative w-full max-w-md bg-[#0A0A0A] border border-white/[0.08] rounded-2xl shadow-[0_0_50px_rgba(0,0,0,0.5)] overflow-visible"
           >
             <div className="flex items-center justify-between p-6 border-b border-white/[0.04]">
               <h2 className="text-lg font-semibold text-white tracking-tight">Log Transaction</h2>
@@ -69,7 +98,6 @@ const TransactionModal = ({ isOpen, onClose }) => {
 
             <form onSubmit={handleSubmit} className="p-6 space-y-6">
               
-              {/* Type Toggle */}
               <div className="flex p-1 bg-white/[0.02] border border-white/[0.04] rounded-xl relative">
                 {['EXPENSE', 'INCOME'].map((type) => (
                   <button
@@ -91,7 +119,6 @@ const TransactionModal = ({ isOpen, onClose }) => {
                 />
               </div>
 
-              {/* Amount */}
               <div>
                 <label className="text-xs tracking-wider text-gray-500 uppercase mb-2 block">Amount</label>
                 <div className="relative flex items-center">
@@ -109,22 +136,57 @@ const TransactionModal = ({ isOpen, onClose }) => {
                 </div>
               </div>
 
-              {/* Custom Dropdowns */}
               <div className="grid grid-cols-2 gap-4">
                 <div>
-                  <label className="text-xs tracking-wider text-gray-500 uppercase mb-2 block">Category</label>
-                  <CustomDropdown 
-                    options={categories}
-                    value={formData.category}
-                    onChange={(val) => setFormData({ ...formData, category: val })}
-                    placeholder="Select..."
-                    icon={Tag}
-                  />
+                  <div className="flex justify-between items-center mb-2">
+                    <label className="text-xs tracking-wider text-gray-500 uppercase block">Category</label>
+                    <button 
+                      type="button" 
+                      onClick={() => setIsAddingCustom(!isAddingCustom)}
+                      className="text-[10px] text-violet-400 hover:text-violet-300 uppercase tracking-wider font-semibold transition-colors"
+                    >
+                      {isAddingCustom ? 'Cancel' : '+ New'}
+                    </button>
+                  </div>
+                  
+                  {isAddingCustom ? (
+                    <motion.div 
+                      initial={{ opacity: 0, scale: 0.95 }}
+                      animate={{ opacity: 1, scale: 1 }}
+                      className="flex items-center gap-2"
+                    >
+                      <input
+                        type="text"
+                        autoFocus
+                        value={newCategoryName}
+                        onChange={(e) => setNewCategoryName(e.target.value)}
+                        onKeyDown={(e) => e.key === 'Enter' && (e.preventDefault(), handleAddCustomCategory())}
+                        placeholder="Name..."
+                        className="w-full bg-[#050505] border border-violet-500/50 rounded-xl py-3 px-3 text-white text-sm focus:outline-none shadow-[0_0_15px_rgba(139,92,246,0.15)]"
+                      />
+                      <button 
+                        type="button"
+                        onClick={handleAddCustomCategory}
+                        className="p-3 bg-violet-600 rounded-xl text-white hover:bg-violet-500 transition-colors"
+                      >
+                        <Check size={16} />
+                      </button>
+                    </motion.div>
+                  ) : (
+                    <CustomDropdown 
+                      options={allCategories}
+                      value={formData.category}
+                      onChange={(val) => setFormData({ ...formData, category: val })}
+                      placeholder="Select..."
+                      icon={Tag}
+                    />
+                  )}
                 </div>
+
                 <div>
                   <label className="text-xs tracking-wider text-gray-500 uppercase mb-2 block">Wallet</label>
                   <CustomDropdown 
-                    options={accounts}
+                    options={accountNames}
                     value={formData.account}
                     onChange={(val) => setFormData({ ...formData, account: val })}
                     placeholder="Select..."
@@ -133,7 +195,6 @@ const TransactionModal = ({ isOpen, onClose }) => {
                 </div>
               </div>
 
-              {/* Description */}
               <div>
                 <label className="text-xs tracking-wider text-gray-500 uppercase mb-2 block">Description</label>
                 <div className="relative">
@@ -150,7 +211,6 @@ const TransactionModal = ({ isOpen, onClose }) => {
                 </div>
               </div>
 
-              {/* Submit Button */}
               <button 
                 type="submit"
                 disabled={isPending}

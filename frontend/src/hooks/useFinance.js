@@ -47,7 +47,6 @@ export const useAccounts = () => {
     queryKey: ['accounts'],
     queryFn: async () => {
       const token = await getToken();
-      // Assuming you create a quick GET /api/accounts route on your backend
       const { data } = await api.get('/accounts', {
         headers: { Authorization: `Bearer ${token}` }
       });
