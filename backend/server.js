@@ -5,6 +5,7 @@ import { clerkMiddleware, requireAuth } from '@clerk/express';
 import { connectDB } from './config/db.js';
 import transactionRouter from './routes/transaction.route.js';
 import exportRouter from './routes/export.route.js';
+import accountRouter from './routes/account.route.js';
 
 dotenv.config();
 
@@ -27,6 +28,7 @@ app.get('/', (req, res) => {
 // Routes
 app.use('/api/transactions', transactionRouter);
 app.use('/api/export', exportRouter);
+app.use('/api/accounts', accountRouter);
 
 
 const PORT = process.env.PORT || 5000;

@@ -8,6 +8,12 @@ const CalendarPicker = ({ selectedDate, onSelectDate }) => {
   const popoverRef = useRef(null);
 
   useEffect(() => {
+    if (isOpen) {
+      setCurrentMonth(selectedDate ? new Date(selectedDate) : new Date());
+    }
+  }, [isOpen, selectedDate]);
+
+  useEffect(() => {
     const handleClickOutside = (event) => {
       if (popoverRef.current && !popoverRef.current.contains(event.target)) {
         setIsOpen(false);
@@ -47,7 +53,6 @@ const CalendarPicker = ({ selectedDate, onSelectDate }) => {
 
   return (
     <div className="relative" ref={popoverRef}>
-      {/* Trigger Button */}
       <button 
         onClick={() => setIsOpen(!isOpen)}
         className={`flex items-center gap-2 px-4 py-2 text-xs font-medium rounded-xl transition-all duration-300 border ${
@@ -60,7 +65,6 @@ const CalendarPicker = ({ selectedDate, onSelectDate }) => {
         <span>{formatDate(selectedDate)}</span>
       </button>
 
-      {/* Animated Calendar Popover */}
       <AnimatePresence>
         {isOpen && (
           <motion.div
@@ -70,7 +74,6 @@ const CalendarPicker = ({ selectedDate, onSelectDate }) => {
             transition={{ type: 'spring', stiffness: 300, damping: 25 }}
             className="absolute right-0 z-50 mt-2 p-4 w-72 bg-[#0A0A0A] border border-white/[0.08] rounded-2xl shadow-[0_15px_50px_rgba(0,0,0,0.8)] backdrop-blur-2xl"
           >
-            {/* Header */}
             <div className="flex justify-between items-center mb-4">
               <button onClick={handlePrevMonth} className="p-1 rounded-lg hover:bg-white/[0.05] text-gray-400 hover:text-white transition-colors">
                 <ChevronLeft size={16} />
@@ -83,7 +86,6 @@ const CalendarPicker = ({ selectedDate, onSelectDate }) => {
               </button>
             </div>
 
-            {/* Days of Week */}
             <div className="grid grid-cols-7 gap-1 mb-2">
               {daysOfWeek.map(day => (
                 <div key={day} className="text-center text-[10px] font-semibold text-gray-500 uppercase tracking-wider py-1">
@@ -92,7 +94,6 @@ const CalendarPicker = ({ selectedDate, onSelectDate }) => {
               ))}
             </div>
 
-            {/* Calendar Grid */}
             <div className="grid grid-cols-7 gap-1">
               {blanks.map(blank => (
                 <div key={`blank-${blank}`} className="p-2" />

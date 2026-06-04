@@ -43,7 +43,7 @@ const CustomDropdown = ({ value, onChange, options, placeholder, icon: Icon }) =
             transition={{ type: 'spring', stiffness: 300, damping: 25 }}
             className="absolute z-50 w-full mt-2 bg-[#0A0A0A] border border-white/[0.08] rounded-xl shadow-[0_10px_40px_rgba(0,0,0,0.8)] overflow-hidden backdrop-blur-xl"
           >
-            <div className="max-h-60 overflow-y-auto custom-scrollbar p-1">
+            <div className="max-h-60 overflow-y-auto custom-scrollbar p-1 overscroll-contain">
               {options.map((option) => (
                 <button
                   key={option}
