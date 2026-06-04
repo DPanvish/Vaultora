@@ -30,7 +30,9 @@ const Onboarding = () => {
 
     if (validAccounts.length > 0) {
       setupAccounts(validAccounts);
-    }
+    }else{
+      alert('Please fill in at least one account with a name and balance.');
+     }
   };
 
   return (

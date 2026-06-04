@@ -9,9 +9,6 @@ export const createTransaction = async (req, res) => {
     const { amount, type, description, category, account, date } = req.body;
     const { userId } = getAuth(req);
 
-    console.log("WHAT THE FRONTEND SENT:", req.body);
-    console.log("WHO CLERK THINKS THIS IS:", getAuth(req).userId);
-
     if(!userId){
         return res.status(401).json({ error: "Unauthorized: Missing Clerk User ID" });
     }
@@ -55,7 +52,7 @@ export const createTransaction = async (req, res) => {
     }catch(error){
         await session.abortTransaction();
         console.error("Transaction Creation Error:", error.message);
-        res.status(400).json({ error: error.message });
+        res.status(500).json({ error: error.message });
     }finally{
         session.endSession();
     }
@@ -99,7 +96,7 @@ export const getTransactions = async (req, res) => {
         res.status(200).json(transactions);
     } catch (error) {
         console.error("Fetch Transactions Error:", error.message);
-        res.status(400).json({ error: error.message });
+        res.status(500).json({ error: error.message });
     }
 };
 
@@ -124,14 +121,16 @@ export const deleteTransaction = async (req, res) => {
 
         const targetAccount = await Account.findOne({ _id: transaction.account, userId }).session(session);
 
-        if (targetAccount) {
-            if (transaction.type === "EXPENSE") {
-                targetAccount.currentBalance += transaction.amount;
-            } else if (transaction.type === "INCOME") {
-                targetAccount.currentBalance -= transaction.amount;
-            }
-            await targetAccount.save({ session });
+        if(!targetAccount){
+            throw new Error("Linked account not found for this transaction.");
         }
+        if(transaction.type === "EXPENSE"){
+            targetAccount.currentBalance += transaction.amount;
+        }else if(transaction.type === "INCOME"){
+            targetAccount.currentBalance -= transaction.amount;
+        }
+        
+        await targetAccount.save({ session });
 
         await Transaction.deleteOne({ _id: id }).session(session);
 
@@ -141,7 +140,7 @@ export const deleteTransaction = async (req, res) => {
     } catch (error) {
         await session.abortTransaction();
         console.error("Delete Transaction Error:", error.message);
-        res.status(400).json({ error: error.message });
+        res.status(500).json({ error: error.message });
     } finally {
         session.endSession();
     }

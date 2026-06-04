@@ -6,6 +6,9 @@ import { getAuth } from "@clerk/express";
 export const getUserAccounts = async(req, res) => {
     try{
         const { userId } = getAuth(req);
+        if(!userId){
+            return res.status(401).json({ error: "Unauthorized" });
+        }
         const accounts = await Account.find({userId});
         res.status(200).json(accounts);
     }catch(error){

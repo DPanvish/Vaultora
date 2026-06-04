@@ -4,7 +4,7 @@ import { api } from "../lib/api"
 
 
 export const useDashboardData = (filters) => {
-  const { getToken } = useAuth();
+  const { getToken, isSignedIn } = useAuth();
 
   return useQuery({
     queryKey: ['dashboard', filters], 
@@ -16,7 +16,7 @@ export const useDashboardData = (filters) => {
       });
       return data;
     },
-    enabled: !!getToken, 
+    enabled: !!isSignedIn, 
   });
 };
 
@@ -41,7 +41,7 @@ export const useAddTransaction = () => {
 
 
 export const useAccounts = () => {
-  const { getToken } = useAuth();
+  const { getToken, isSignedIn } = useAuth();
 
   return useQuery({
     queryKey: ['accounts'],
@@ -52,7 +52,7 @@ export const useAccounts = () => {
       });
       return data;
     },
-    enabled: !!getToken,
+    enabled: !!isSignedIn,
   });
 };
 
@@ -64,8 +64,6 @@ export const useSetupAccounts = () => {
   return useMutation({
     mutationFn: async (accounts) => {
       const token = await getToken();
-
-      console.log("My Clerk Token is:", token); 
       
       if(!token){
         throw new Error("Frontend failed to generate a Clerk token.");
