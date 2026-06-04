@@ -84,3 +84,26 @@ export const useSetupAccounts = () => {
     }
   });
 };
+
+
+export const useDeleteTransaction = () => {
+  const { getToken } = useAuth();
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: async (transactionId) => {
+      const token = await getToken();
+      const { data } = await api.delete(`/transactions/${transactionId}`, {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+      return data;
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['dashboard'] });
+      queryClient.invalidateQueries({ queryKey: ['accounts'] });
+    },
+    onError: (error) => {
+      console.error("Failed to delete:", error.response?.data || error.message);
+    }
+  });
+};

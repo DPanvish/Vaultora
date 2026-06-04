@@ -102,3 +102,47 @@ export const getTransactions = async (req, res) => {
         res.status(400).json({ error: error.message });
     }
 };
+
+// @desc      Delete a transaction and reverse the balance
+// @route     DELETE /api/transactions/:id
+export const deleteTransaction = async (req, res) => {
+    const session = await mongoose.startSession();
+    session.startTransaction();
+
+    try {
+        const { id } = req.params;
+        const { userId } = getAuth(req);
+
+        if (!userId) {
+            return res.status(401).json({ error: "Unauthorized" });
+        }
+
+        const transaction = await Transaction.findOne({ _id: id, userId }).session(session);
+        if (!transaction) {
+            throw new Error("Transaction not found or unauthorized.");
+        }
+
+        const targetAccount = await Account.findOne({ _id: transaction.account, userId }).session(session);
+
+        if (targetAccount) {
+            if (transaction.type === "EXPENSE") {
+                targetAccount.currentBalance += transaction.amount;
+            } else if (transaction.type === "INCOME") {
+                targetAccount.currentBalance -= transaction.amount;
+            }
+            await targetAccount.save({ session });
+        }
+
+        await Transaction.deleteOne({ _id: id }).session(session);
+
+        await session.commitTransaction();
+        res.status(200).json({ message: "Transaction successfully deleted and balance refunded." });
+
+    } catch (error) {
+        await session.abortTransaction();
+        console.error("Delete Transaction Error:", error.message);
+        res.status(400).json({ error: error.message });
+    } finally {
+        session.endSession();
+    }
+};
