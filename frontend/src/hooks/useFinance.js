@@ -105,3 +105,21 @@ export const useDeleteTransaction = () => {
     }
   });
 };
+
+
+export const useAIInsights = () => {
+    const { getToken } = useAuth();
+
+    return useQuery({
+        queryKey: ['ai-insights'],
+        queryFn: async () => {
+            const token = await getToken();
+            const { data } = await api.get('/insights', {
+                headers: { Authorization: `Bearer ${token}` }
+            });
+            return data;
+        },
+        enabled: !!getToken,
+        staleTime: 1000 * 60 * 60,
+    });
+};

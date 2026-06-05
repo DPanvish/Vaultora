@@ -6,6 +6,7 @@ import { connectDB } from './config/db.js';
 import transactionRouter from './routes/transaction.route.js';
 import exportRouter from './routes/export.route.js';
 import accountRouter from './routes/account.route.js';
+import insightsRouter from './routes/insights.route.js';
 
 dotenv.config();
 
@@ -29,6 +30,7 @@ app.get('/', (req, res) => {
 app.use('/api/transactions', transactionRouter);
 app.use('/api/export', exportRouter);
 app.use('/api/accounts', accountRouter);
+app.use('/api/insights', insightsRouter);
 
 
 const PORT = process.env.PORT || 5000;
