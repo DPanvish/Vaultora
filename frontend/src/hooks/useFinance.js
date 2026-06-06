@@ -123,3 +123,21 @@ export const useAIInsights = () => {
         staleTime: 1000 * 60 * 60,
     });
 };
+
+
+export const useCategoryAnalytics = (filters) => {
+  const { getToken } = useAuth();
+
+  return useQuery({
+    queryKey: ['category-analytics', filters],
+    queryFn: async () => {
+      const token = await getToken();
+      const { data } = await api.get('/analytics/categories', {
+        params: filters,
+        headers: { Authorization: `Bearer ${token}` }
+      });
+      return data;
+    },
+    enabled: !!getToken,
+  });
+};
