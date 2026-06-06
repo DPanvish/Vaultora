@@ -9,6 +9,7 @@ import ExpenseChart from './ExpenseChart';
 import CalendarPicker from './CalendarPicker';
 import Onboarding from './Onboarding';
 import TransactionList from './TransactionList';
+import SmartInsights from "./SmartInsights.jsx";
 import { useDashboardData, useAccounts } from '../hooks/useFinance';
 
 const Dashboard = () => {
@@ -197,6 +198,7 @@ const Dashboard = () => {
         ))}
 
         <ExpenseChart data={chartData} />
+          <SmartInsights />
       </div>
 
       <TransactionList transactions={transactions} />
