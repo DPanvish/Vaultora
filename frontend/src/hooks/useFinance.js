@@ -108,7 +108,7 @@ export const useDeleteTransaction = () => {
 
 
 export const useAIInsights = () => {
-    const { getToken } = useAuth();
+    const { getToken, isSignedIn } = useAuth();
 
     return useQuery({
         queryKey: ['ai-insights'],
@@ -119,7 +119,7 @@ export const useAIInsights = () => {
             });
             return data;
         },
-        enabled: !!getToken,
+        enabled: !!isSignedIn,
         staleTime: 1000 * 60 * 60,
     });
 };

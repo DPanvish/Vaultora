@@ -15,7 +15,7 @@ const SmartInsights = () => {
         <motion.div
             initial={{opacity: 0, y: 20}}
             animate={{opacity: 1, y: 0}}
-            className="col-span-1 lg:colspan-3 rounded-2xl bg-gradient-to-br from-[#120B29] to-[#0A0A0A] p-6 border border-violet-500/20 relative overflow-hidden group"
+            className="col-span-1 lg:col-span-3 rounded-2xl bg-gradient-to-br from-[`#120B29`] to-[`#0A0A0A`] p-6 border border-violet-500/20 relative overflow-hidden group"
         >
             <div className="absolute top-0 right-0 w-64 h-64 bg-violet-600/10 rounded-full blur-3xl pointer-events-none" />
 
