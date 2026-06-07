@@ -204,7 +204,9 @@ const Dashboard = () => {
 
       <TransactionList transactions={transactions} />
 
-      <AdvancedAnalytics />
+      <div className="mt-3">
+        <AdvancedAnalytics />
+      </div>
 
       <TransactionModal isOpen={isModalOpen} onClose={() => setIsModalOpen(false)} />
     </div>

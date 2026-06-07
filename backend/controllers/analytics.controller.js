@@ -17,9 +17,18 @@ export const getTransactionByCategory = async(req, res) => {
         }else if(range === '30d'){
             queryDate = { $gte: new Date(now.setDate(now.getDate() - 30)) };
         }else if(range === 'custom' && startDate && endDate){
-            queryDate = { $gte: new Date(startDate), $lte: new Date(endDate) };
-        }else{
-        // Default to last 30 days if unspecified
+            const start = new Date(startDate);
+            const end = new Date(endDate);
+
+            if (Number.isNaN(start.getTime()) || Number.isNaN(end.getTime()) || start > end) {
+                return res.status(400).json({ error: "Invalid custom date range." });
+            }
+
+            // Include the entire end day
+            end.setHours(23, 59, 59, 999);
+            queryDate = { $gte: start, $lte: end };
+         }else{
+            // Default to last 30 days if unspecified
             queryDate = { $gte: new Date(now.setDate(now.getDate() - 30)) };
         }
 
