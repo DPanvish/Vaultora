@@ -7,6 +7,7 @@ import transactionRouter from './routes/transaction.route.js';
 import exportRouter from './routes/export.route.js';
 import accountRouter from './routes/account.route.js';
 import insightsRouter from './routes/insights.route.js';
+import analyticsRouter from './routes/analytics.route.js';
 
 dotenv.config();
 
@@ -31,6 +32,7 @@ app.use('/api/transactions', transactionRouter);
 app.use('/api/export', exportRouter);
 app.use('/api/accounts', accountRouter);
 app.use('/api/insights', insightsRouter);
+app.use('/api/analytics', analyticsRouter);
 
 
 const PORT = process.env.PORT || 5000;

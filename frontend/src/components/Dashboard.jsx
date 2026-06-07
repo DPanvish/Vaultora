@@ -10,6 +10,7 @@ import CalendarPicker from './CalendarPicker';
 import Onboarding from './Onboarding';
 import TransactionList from './TransactionList';
 import SmartInsights from "./SmartInsights.jsx";
+import AdvancedAnalytics from './AdvancedAnalytics.jsx';
 import { useDashboardData, useAccounts } from '../hooks/useFinance';
 
 const Dashboard = () => {
@@ -202,6 +203,10 @@ const Dashboard = () => {
       </div>
 
       <TransactionList transactions={transactions} />
+
+      <div className="mt-3">
+        <AdvancedAnalytics />
+      </div>
 
       <TransactionModal isOpen={isModalOpen} onClose={() => setIsModalOpen(false)} />
     </div>
