@@ -49,3 +49,16 @@ The frontend was initialized using Vite with the React template.
 **Why these dependencies are used:**
 *   **`@tanstack/react-query`**: A powerful asynchronous state management library for React, used for declarative data fetching, caching, and updating of server state.
 *   **`recharts`**: A composable charting library built on React components, used to create data visualizations like the expense trends chart.
+
+## Mobile Initialization and Dependencies
+
+### 1. Navigation, Networking, and UI Dependencies
+**Command used:** 
+`npm install @react-navigation/native @react-navigation/native-stack @tanstack/react-query axios lucide-react-native` (in the `mobile` directory)
+
+**Why these dependencies are used:**
+*   **`@react-navigation/native`**: The core library for routing and navigation in React Native applications, allowing navigation between different screens.
+*   **`@react-navigation/native-stack`**: Provides a way for your app to transition between screens where each new screen is placed on top of a stack, using native navigation primitives for better performance.
+*   **`@tanstack/react-query`**: A robust asynchronous state management library, used for declarative data fetching, caching, and updating of server state in the mobile application.
+*   **`axios`**: A promise-based HTTP client, used to reliably make API requests to the backend server from the mobile application.
+*   **`lucide-react-native`**: A comprehensive collection of beautifully crafted SVG icons optimized for React Native, used for consistent UI iconography.
