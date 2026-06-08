@@ -40,6 +40,29 @@ const Dashboard = () => {
   }, [transactions]);
 
   const chartData = useMemo(() => {
+    const end = new Date();
+    let start = new Date();
+
+    if (selectedDate) {
+      start = new Date(selectedDate);
+      end.setTime(start.getTime());
+    } else if (activeRange && activeRange !== 'Overall') {
+      if (activeRange === 'Today') {
+        start.setHours(0, 0, 0, 0);
+      } else if (activeRange === '7 Days') {
+        start.setDate(end.getDate() - 6);
+      } else if (activeRange === '1 Month') {
+        start.setMonth(end.getMonth() - 1);
+      } else if (activeRange === '6 Months') {
+        start.setMonth(end.getMonth() - 6);
+      } else if (activeRange === '1 Year') {
+        start.setFullYear(end.getFullYear() - 1);
+      }
+    } else {
+      if (transactions.length === 0) return [];
+      start = new Date(transactions[transactions.length - 1].date);
+    }
+
     const grouped = transactions
       .filter(tx => tx.type === 'EXPENSE')
       .reduce((acc, tx) => {
@@ -48,11 +71,31 @@ const Dashboard = () => {
         return acc;
       }, {});
 
-    return Object.keys(grouped).map(date => ({
-      date,
-      expenses: grouped[date]
-    })).reverse(); 
-  }, [transactions]);
+    const data = [];
+    let current = new Date(start);
+    current.setHours(0, 0, 0, 0);
+    const endDate = new Date(end);
+    endDate.setHours(23, 59, 59, 999);
+
+    // Safeguard for potentially huge ranges in 'Overall'
+    const maxDays = 1000;
+    let days = 0;
+
+    while (current <= endDate && days < maxDays) {
+      const dateStr = current.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
+      // Only add to data if it's not already added to avoid duplicates when skipping time zones or daylight savings
+      if (data.length === 0 || data[data.length - 1].date !== dateStr) {
+        data.push({
+          date: dateStr,
+          expenses: grouped[dateStr] || 0
+        });
+      }
+      current.setDate(current.getDate() + 1);
+      days++;
+    }
+
+    return data;
+  }, [transactions, activeRange, selectedDate]);
 
   const handleRangeClick = (range) => {
     setActiveRange(range);
