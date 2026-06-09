@@ -62,3 +62,11 @@ The frontend was initialized using Vite with the React template.
 *   **`@tanstack/react-query`**: A robust asynchronous state management library, used for declarative data fetching, caching, and updating of server state in the mobile application.
 *   **`axios`**: A promise-based HTTP client, used to reliably make API requests to the backend server from the mobile application.
 *   **`lucide-react-native`**: A comprehensive collection of beautifully crafted SVG icons optimized for React Native, used for consistent UI iconography.
+
+### 2. Authentication and Secure Storage Dependencies
+**Command used:** 
+`npm install @clerk/clerk-expo expo-secure-store` (in the `mobile` directory)
+
+**Why these dependencies are used:**
+*   **`@clerk/clerk-expo`**: The official Clerk SDK for Expo and React Native. Used to provide secure user authentication, sign-in, and session management tailored for the mobile application.
+*   **`expo-secure-store`**: An Expo library that provides a way to encrypt and securely store key-value pairs locally on the device. Required by Clerk to securely persist authentication tokens and session data.
