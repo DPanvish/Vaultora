@@ -1,6 +1,74 @@
-import { View, Text, StyleSheet, TouchableOpacity } from 'react-native'
-import { SafeAreaView } from 'react-native-safe-area-context'
-import { Wallet, ArrowRight } from 'lucide-react-native';
+import React from 'react';
+import { StyleSheet, Text, View, TouchableOpacity, ActivityIndicator, Alert } from 'react-native';
+import { Wallet } from 'lucide-react-native';
+import { useOAuth } from '@clerk/clerk-expo';
+import * as WebBrowser from 'expo-web-browser';
+import * as Linking from 'expo-linking';
+import { router } from 'expo-router';
+import { SafeAreaView } from 'react-native-safe-area-context';
+
+
+WebBrowser.maybeCompleteAuthSession();
+
+const Home = () => {
+    const { startOAuthFlow } = useOAuth({ strategy: 'oauth_google' });
+    const [isLoading, setIsLoading] = React.useState(false);
+
+    const handleGoogleSignIn = async () => {
+        try{
+            setIsLoading(true);
+            
+            const redirectUrl = Linking.createURL('/dashboard', { scheme: 'vaultora' });
+
+            const { createdSessionId, setActive } = await startOAuthFlow({
+                redirectUrl,
+            });
+
+            if (createdSessionId && setActive) {
+                await setActive({ session: createdSessionId });
+                router.replace('/dashboard'); 
+            }
+        }catch(err){
+            console.error('OAuth error', err);
+            Alert.alert('Sign In Failed', 'Unable to sign in with Google. Please try again.');
+        }finally{
+            setIsLoading(false);
+        }
+    };
+
+  return (
+    <SafeAreaView style={styles.container}>
+        <View style={styles.glow} />
+
+        <View style={styles.content}>
+            <View style={styles.iconContainer}>
+                <Wallet stroke="#8B5CF6" strokeWidth={1.5} size={48} />
+            </View>
+
+            <Text style={styles.title}>Vaultora</Text>
+            <Text style={styles.subtitle}>Independent Ledger</Text>
+
+            <TouchableOpacity 
+                style={styles.button}
+                activeOpacity={0.8}
+                onPress={handleGoogleSignIn}
+                disabled={isLoading}
+            >
+            {isLoading ? (
+                <ActivityIndicator color="#FFF" />
+            ) : (
+                <>
+                    <View style={styles.googleIconPlaceholder}>
+                        <Text style={styles.googleText}>G</Text>
+                    </View>
+                    <Text style={styles.buttonText}>Continue with Google</Text>
+                </>
+            )}
+            </TouchableOpacity>
+        </View>
+    </SafeAreaView>
+  );
+}
 
 const styles = StyleSheet.create({
     container: {
@@ -46,16 +114,26 @@ const styles = StyleSheet.create({
     button: {
         flexDirection: 'row',
         alignItems: 'center',
-        backgroundColor: '#8B5CF6',
-        paddingVertical: 16,
-        paddingHorizontal: 32,
+        backgroundColor: '#1A1A1A',
+        borderWidth: 1,
+        borderColor: 'rgba(255,255,255,0.1)',
+        paddingVertical: 14,
+        paddingHorizontal: 24,
         borderRadius: 16,
-        gap: 8,
-        shadowColor: '#8B5CF6',
-        shadowOffset: { width: 0, height: 4 },
-        shadowOpacity: 0.4,
-        shadowRadius: 12,
-        elevation: 8,
+        gap: 12,
+    },
+    googleIconPlaceholder: {
+        backgroundColor: '#FFF',
+        width: 24,
+        height: 24,
+        borderRadius: 12,
+        alignItems: 'center',
+        justifyContent: 'center',
+    },
+    googleText: {
+        color: '#000',
+        fontWeight: '900',
+        fontSize: 14,
     },
     buttonText: {
         color: '#FFFFFF',
@@ -64,30 +142,4 @@ const styles = StyleSheet.create({
     }
 });
 
-const index = () => {
-    return (
-        <SafeAreaView style={styles.container}>
-            <View style={styles.glow}/>
-            
-            <View style={styles.content}>
-                <View style={styles.iconContainer}>
-                    <Wallet stroke="#8B5CF6" strokeWidth={1.5} size={48} />
-                </View>
-
-                <Text style={styles.title}>Vaultora</Text>
-                <Text style={styles.subtitle}>Independent Living Ledger</Text>
-
-                <TouchableOpacity
-                    style={styles.button}
-                    activeOpacity={0.8}
-                    onPress={() => console.log("Init Auth Flow")}
-                >
-                    <Text style={styles.buttonText}>Connect Wallet</Text>
-                    <ArrowRight stroke="#FFF" size={18} />
-                </TouchableOpacity>
-            </View>
-        </SafeAreaView>
-    )
-}
-
-export default index
+export default Home;
