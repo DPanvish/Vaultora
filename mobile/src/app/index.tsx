@@ -1,5 +1,5 @@
 import React from 'react';
-import { StyleSheet, Text, View, TouchableOpacity, ActivityIndicator } from 'react-native';
+import { StyleSheet, Text, View, TouchableOpacity, ActivityIndicator, Alert } from 'react-native';
 import { Wallet } from 'lucide-react-native';
 import { useOAuth } from '@clerk/clerk-expo';
 import * as WebBrowser from 'expo-web-browser';
@@ -30,6 +30,7 @@ const Home = () => {
             }
         }catch(err){
             console.error('OAuth error', err);
+            Alert.alert('Sign In Failed', 'Unable to sign in with Google. Please try again.');
         }finally{
             setIsLoading(false);
         }
