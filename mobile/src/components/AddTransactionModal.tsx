@@ -18,14 +18,17 @@ export default function AddTransactionModal({ visible, onClose }: Props) {
     const {mutate: addTransaction, isPending} = useAddTransaction();
 
     const handleSubmit = () => {
-        if (!amount || !category || !selectedAccount) {
+        const parsedAmount = Number(amount);
+        const normalizedCategory = category.trim();
+
+        if(!selectedAccount || !normalizedCategory || !Number.isFinite(parsedAmount) ||parsedAmount <= 0){
             alert('Please fill out all fields');
-        return;
+            return;
         }
 
         addTransaction({
-            amount: Number(amount),
-            category,
+            amount: parsedAmount,
+            category: normalizedCategory,
             type,
             account: selectedAccount, 
             description: 'Logged via Vaultora Mobile',
