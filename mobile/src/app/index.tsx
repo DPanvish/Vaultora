@@ -1,7 +1,7 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { StyleSheet, Text, View, TouchableOpacity, ActivityIndicator, Alert } from 'react-native';
 import { Wallet } from 'lucide-react-native';
-import { useOAuth } from '@clerk/clerk-expo';
+import { useOAuth, useAuth } from '@clerk/clerk-expo';
 import * as WebBrowser from 'expo-web-browser';
 import * as Linking from 'expo-linking';
 import { router } from 'expo-router';
@@ -11,8 +11,15 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 WebBrowser.maybeCompleteAuthSession();
 
 const Home = () => {
-    const { startOAuthFlow } = useOAuth({ strategy: 'oauth_google' });
+    const {startOAuthFlow} = useOAuth({ strategy: 'oauth_google' });
+    const {isSignedIn, isLoaded} = useAuth();
     const [isLoading, setIsLoading] = React.useState(false);
+
+    useEffect(() => {
+        if (isLoaded && isSignedIn) {
+            router.replace('/dashboard');
+        }
+    }, [isLoaded, isSignedIn]);
 
     const handleGoogleSignIn = async () => {
         try{
@@ -35,6 +42,10 @@ const Home = () => {
             setIsLoading(false);
         }
     };
+
+    if (!isLoaded) {
+        return <SafeAreaView style={styles.container} />;
+    }
 
   return (
     <SafeAreaView style={styles.container}>
