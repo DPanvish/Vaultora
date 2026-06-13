@@ -1,4 +1,4 @@
-import { useQuery } from '@tanstack/react-query';
+import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { useAuth } from '@clerk/clerk-expo';
 import { api } from '../api/client';
 
@@ -30,4 +30,23 @@ export const useAccounts = () => {
             return data;
         },
     });
+};
+
+export const useAddTransaction = () => {
+  const { getToken } = useAuth();
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: async (transactionData: any) => {
+      const token = await getToken();
+      const { data } = await api.post('/transactions', transactionData, {
+        headers: { Authorization: `Bearer ${token}` }
+      });
+      return data;
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['transactions'] });
+      queryClient.invalidateQueries({ queryKey: ['accounts'] });
+    },
+  });
 };

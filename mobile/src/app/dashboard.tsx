@@ -1,14 +1,20 @@
-import { View, Text, StyleSheet, SafeAreaView, TouchableOpacity, FlatList, ActivityIndicator } from 'react-native';
+import { useState } from 'react';
+import { View, Text, StyleSheet, TouchableOpacity, FlatList, ActivityIndicator } from 'react-native';
+import { SafeAreaView } from 'react-native-safe-area-context';
 import { useAuth, useUser } from '@clerk/clerk-expo';
 import { router } from 'expo-router';
-import { ArrowDownLeft, ArrowUpRight } from 'lucide-react-native';
+import { ArrowDownLeft, ArrowUpRight, Plus } from 'lucide-react-native';
 import { useTransactions, useAccounts } from '../hooks/useFinance';
+import AddTransactionModal from '../components/AddTransactionModal';
+
 
 const Dashboard = () => {
     const { signOut } = useAuth();
     const { user } = useUser();
     const { data: transactions = [], isLoading: txLoading } = useTransactions();
     const { data: accounts = [], isLoading: accLoading } = useAccounts();
+    const [isModalVisible, setIsModalVisible] = useState(false);
+
 
     const handleSignOut = async() => {
         await signOut();
@@ -17,36 +23,36 @@ const Dashboard = () => {
 
     const totalBalance = accounts.reduce((sum: number, acc: any) => sum + acc.currentBalance, 0);
 
-  const renderTransaction = ({ item }: { item: any }) => {
-    const isIncome = item.type === 'INCOME';
-    
-    return (
-        <View style={styles.txCard}>
-            <View style={styles.txLeft}>
-                <View style={[styles.iconBox, isIncome ? styles.iconIncome : styles.iconExpense]}>
-                    {isIncome ? (
-                    <ArrowDownLeft size={20} color="#34D399" /> 
-                    ) : (
-                    <ArrowUpRight size={20} color="#FB7185" />
-                    )}
+    const renderTransaction = ({ item }: { item: any }) => {
+        const isIncome = item.type === 'INCOME';
+        
+        return (
+            <View style={styles.txCard}>
+                <View style={styles.txLeft}>
+                    <View style={[styles.iconBox, isIncome ? styles.iconIncome : styles.iconExpense]}>
+                        {isIncome ? (
+                        <ArrowDownLeft size={20} color="#34D399" /> 
+                        ) : (
+                        <ArrowUpRight size={20} color="#FB7185" />
+                        )}
+                    </View>
+                    <View>
+                        <Text style={styles.txCategory}>{item.category}</Text>
+                        <Text style={styles.txDate}>
+                            {new Date(item.date).toLocaleDateString('en-US', { month: 'short', day: 'numeric' })}
+                        </Text>
+                    </View>
                 </View>
-                <View>
-                    <Text style={styles.txCategory}>{item.category}</Text>
-                    <Text style={styles.txDate}>
-                        {new Date(item.date).toLocaleDateString('en-US', { month: 'short', day: 'numeric' })}
+                    
+                <View style={styles.txRight}>
+                    <Text style={[styles.txAmount, isIncome ? styles.textIncome : styles.textExpense]}>
+                        {isIncome ? '+' : '-'}₹{item.amount.toLocaleString('en-IN')}
+                    </Text>
+                    <Text style={styles.txAccount} numberOfLines={1}>
+                        {item.account?.name || 'Wallet'}
                     </Text>
                 </View>
             </View>
-                
-            <View style={styles.txRight}>
-                <Text style={[styles.txAmount, isIncome ? styles.textIncome : styles.textExpense]}>
-                    {isIncome ? '+' : '-'}₹{item.amount.toLocaleString('en-IN')}
-                </Text>
-                <Text style={styles.txAccount} numberOfLines={1}>
-                    {item.account?.name || 'Wallet'}
-                </Text>
-            </View>
-        </View>
         );
     };
 
@@ -91,6 +97,21 @@ const Dashboard = () => {
                     />
                 )}
             </View>
+
+            {/* The Glowing FAB */}
+            <TouchableOpacity 
+                style={styles.fab} 
+                activeOpacity={0.8}
+                onPress={() => setIsModalVisible(true)}
+            >
+                <Plus size={24} color="#FFF" />
+            </TouchableOpacity>
+
+            {/* The Modal */}
+            <AddTransactionModal 
+                visible={isModalVisible} 
+                onClose={() => setIsModalVisible(false)} 
+            />
         </SafeAreaView>
     );
 };
@@ -228,6 +249,22 @@ const styles = StyleSheet.create({
         fontSize: 12,
         marginTop: 2,
         maxWidth: 100,
+    },
+    fab: {
+        position: 'absolute',
+        bottom: 30,
+        right: 24,
+        width: 60,
+        height: 60,
+        borderRadius: 30,
+        backgroundColor: '#8B5CF6',
+        alignItems: 'center',
+        justifyContent: 'center',
+        shadowColor: '#8B5CF6',
+        shadowOffset: { width: 0, height: 4 },
+        shadowOpacity: 0.5,
+        shadowRadius: 12,
+        elevation: 8,
     }
 });
 
