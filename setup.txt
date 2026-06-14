@@ -24,6 +24,13 @@ The backend was initialized as a Node.js project (configured as an ES module wit
 **Why these dependencies are used:**
 *   **`nodemon`**: A development utility that monitors the project directory for file changes and automatically restarts the Node server, greatly improving the developer experience.
 
+### 4. AI and Insights Dependencies
+**Command used:** 
+`npm install @google/generative-ai`
+
+**Why these dependencies are used:**
+*   **`@google/generative-ai`**: The official Google Gen AI SDK for Node.js. Used to integrate Gemini models for generating smart financial insights and analyzing user transaction data.
+
 ## Frontend Initialization and Dependencies
 
 ### 1. Initial Project Setup

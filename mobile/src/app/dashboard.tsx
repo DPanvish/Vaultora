@@ -1,10 +1,11 @@
 import { useState } from 'react';
-import { View, Text, StyleSheet, TouchableOpacity, FlatList, ActivityIndicator } from 'react-native';
+import { View, Text, StyleSheet, TouchableOpacity, FlatList, ActivityIndicator, Alert } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useAuth, useUser } from '@clerk/clerk-expo';
 import { router } from 'expo-router';
-import { ArrowDownLeft, ArrowUpRight, Plus } from 'lucide-react-native';
-import { useTransactions, useAccounts } from '../hooks/useFinance';
+import { ArrowDownLeft, ArrowUpRight, Plus, Trash2 } from 'lucide-react-native';
+import { Swipeable } from 'react-native-gesture-handler';
+import { useTransactions, useAccounts, useDeleteTransaction } from '../hooks/useFinance';
 import AddTransactionModal from '../components/AddTransactionModal';
 
 
@@ -13,6 +14,7 @@ const Dashboard = () => {
     const { user } = useUser();
     const { data: transactions = [], isLoading: txLoading } = useTransactions();
     const { data: accounts = [], isLoading: accLoading } = useAccounts();
+    const { mutate: deleteTransaction } = useDeleteTransaction();
     const [isModalVisible, setIsModalVisible] = useState(false);
 
 
@@ -25,34 +27,63 @@ const Dashboard = () => {
 
     const renderTransaction = ({ item }: { item: any }) => {
         const isIncome = item.type === 'INCOME';
-        
+
+  
+        const renderRightActions = () => {
+            const confirmDelete = () => {
+                Alert.alert(
+                    'Delete Transaction',
+                    'Are you sure you want to delete this transaction?',
+                    [
+                        { text: 'Cancel', style: 'cancel' },
+                        { 
+                            text: 'Delete', 
+                            style: 'destructive',
+                            onPress: () => deleteTransaction(item._id)
+                        }
+                    ]
+                );
+            };
+
+            return (
+                <TouchableOpacity 
+                    style={styles.deleteAction}
+                    onPress={confirmDelete}
+                >
+                    <Trash2 color="#FFF" size={24} />
+                </TouchableOpacity>
+            );
+        };
+
         return (
-            <View style={styles.txCard}>
-                <View style={styles.txLeft}>
-                    <View style={[styles.iconBox, isIncome ? styles.iconIncome : styles.iconExpense]}>
-                        {isIncome ? (
-                        <ArrowDownLeft size={20} color="#34D399" /> 
-                        ) : (
-                        <ArrowUpRight size={20} color="#FB7185" />
-                        )}
+            <Swipeable renderRightActions={renderRightActions} overshootRight={false}>
+                <View style={styles.txCard}>
+                    <View style={styles.txLeft}>
+                        <View style={[styles.iconBox, isIncome ? styles.iconIncome : styles.iconExpense]}>
+                            {isIncome ? (
+                                <ArrowDownLeft size={20} color="#34D399" /> 
+                            ) : (
+                                <ArrowUpRight size={20} color="#FB7185" />
+                            )}
+                        </View>
+                        <View>
+                            <Text style={styles.txCategory}>{item.category}</Text>
+                            <Text style={styles.txDate}>
+                                {new Date(item.date).toLocaleDateString('en-US', { month: 'short', day: 'numeric' })}
+                            </Text>
+                        </View>
                     </View>
-                    <View>
-                        <Text style={styles.txCategory}>{item.category}</Text>
-                        <Text style={styles.txDate}>
-                            {new Date(item.date).toLocaleDateString('en-US', { month: 'short', day: 'numeric' })}
+
+                    <View style={styles.txRight}>
+                        <Text style={[styles.txAmount, isIncome ? styles.textIncome : styles.textExpense]}>
+                            {isIncome ? '+' : '-'}₹{item.amount.toLocaleString('en-IN')}
+                        </Text>
+                        <Text style={styles.txAccount} numberOfLines={1}>
+                            {item.account?.name || 'Wallet'}
                         </Text>
                     </View>
                 </View>
-                    
-                <View style={styles.txRight}>
-                    <Text style={[styles.txAmount, isIncome ? styles.textIncome : styles.textExpense]}>
-                        {isIncome ? '+' : '-'}₹{item.amount.toLocaleString('en-IN')}
-                    </Text>
-                    <Text style={styles.txAccount} numberOfLines={1}>
-                        {item.account?.name || 'Wallet'}
-                    </Text>
-                </View>
-            </View>
+            </Swipeable>
         );
     };
 
@@ -265,7 +296,16 @@ const styles = StyleSheet.create({
         shadowOpacity: 0.5,
         shadowRadius: 12,
         elevation: 8,
-    }
+    },
+    deleteAction: {
+    backgroundColor: '#E11D48',
+    justifyContent: 'center',
+    alignItems: 'center',
+    width: 80,
+    borderRadius: 16,
+    marginBottom: 12,
+    marginLeft: 12,
+  },
 });
 
 export default Dashboard;
