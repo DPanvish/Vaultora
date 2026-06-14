@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { View, Text, StyleSheet, TouchableOpacity, FlatList, ActivityIndicator } from 'react-native';
+import { View, Text, StyleSheet, TouchableOpacity, FlatList, ActivityIndicator, Alert } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useAuth, useUser } from '@clerk/clerk-expo';
 import { router } from 'expo-router';
@@ -26,19 +26,34 @@ const Dashboard = () => {
     const totalBalance = accounts.reduce((sum: number, acc: any) => sum + acc.currentBalance, 0);
 
     const renderTransaction = ({ item }: { item: any }) => {
-  const isIncome = item.type === 'INCOME';
+        const isIncome = item.type === 'INCOME';
 
-  // This defines the red block that lives UNDER the transaction card
-    const renderRightActions = () => {
-        return (
-        <TouchableOpacity 
-            style={styles.deleteAction}
-            onPress={() => deleteTransaction(item._id)}
-        >
-            <Trash2 color="#FFF" size={24} />
-        </TouchableOpacity>
-        );
-    };
+  
+        const renderRightActions = () => {
+            const confirmDelete = () => {
+                Alert.alert(
+                    'Delete Transaction',
+                    'Are you sure you want to delete this transaction?',
+                    [
+                        { text: 'Cancel', style: 'cancel' },
+                        { 
+                            text: 'Delete', 
+                            style: 'destructive',
+                            onPress: () => deleteTransaction(item._id)
+                        }
+                    ]
+                );
+            };
+
+            return (
+                <TouchableOpacity 
+                    style={styles.deleteAction}
+                    onPress={confirmDelete}
+                >
+                    <Trash2 color="#FFF" size={24} />
+                </TouchableOpacity>
+            );
+        };
 
         return (
             <Swipeable renderRightActions={renderRightActions} overshootRight={false}>

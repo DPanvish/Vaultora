@@ -63,7 +63,7 @@ export const useDeleteTransaction = () => {
 
     return useMutation({
         mutationFn: async (transactionId: string) => {
-            const token = await getToken();
+            const token = await requireToken(getToken);
             const { data } = await api.delete(`/transactions/${transactionId}`, {
                 headers: { Authorization: `Bearer ${token}` }
             });
