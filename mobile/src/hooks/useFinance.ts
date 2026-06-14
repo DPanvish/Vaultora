@@ -39,20 +39,39 @@ export const useAccounts = () => {
 };
 
 export const useAddTransaction = () => {
-  const { getToken } = useAuth();
-  const queryClient = useQueryClient();
+    const { getToken } = useAuth();
+    const queryClient = useQueryClient();
 
-  return useMutation({
-    mutationFn: async (transactionData: any) => {
-      const token = await requireToken(getToken);
-      const { data } = await api.post('/transactions', transactionData, {
-        headers: { Authorization: `Bearer ${token}` }
-      });
-      return data;
-    },
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['transactions'] });
-      queryClient.invalidateQueries({ queryKey: ['accounts'] });
-    },
-  });
+    return useMutation({
+        mutationFn: async (transactionData: any) => {
+            const token = await requireToken(getToken);
+            const { data } = await api.post('/transactions', transactionData, {
+                headers: { Authorization: `Bearer ${token}` }
+            });
+        return data;
+        },
+        onSuccess: () => {
+            queryClient.invalidateQueries({ queryKey: ['transactions'] });
+            queryClient.invalidateQueries({ queryKey: ['accounts'] });
+        },
+    });
+};
+
+export const useDeleteTransaction = () => {
+    const { getToken } = useAuth();
+    const queryClient = useQueryClient();
+
+    return useMutation({
+        mutationFn: async (transactionId: string) => {
+            const token = await getToken();
+            const { data } = await api.delete(`/transactions/${transactionId}`, {
+                headers: { Authorization: `Bearer ${token}` }
+            });
+            return data;
+        },
+        onSuccess: () => {
+            queryClient.invalidateQueries({ queryKey: ['transactions'] });
+            queryClient.invalidateQueries({ queryKey: ['accounts'] });
+        },
+    });
 };

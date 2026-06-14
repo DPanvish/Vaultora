@@ -3,6 +3,7 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { StatusBar } from "expo-status-bar";
 import { ClerkProvider, ClerkLoaded } from '@clerk/clerk-expo';
 import { tokenCache } from '../utils/tokenCache';
+import { GestureHandlerRootView } from 'react-native-gesture-handler';
 
 const queryClient = new QueryClient();
 
@@ -14,16 +15,18 @@ if (!publishableKey) {
 
 const RootLayout = () => {
     return (
-        <ClerkProvider tokenCache={tokenCache} publishableKey={publishableKey}>
-            <ClerkLoaded>
-                <QueryClientProvider client={queryClient}>
-                    <StatusBar style="light" />
-                    <Stack screenOptions={{ headerShown: false }}>
-                        <Stack.Screen name="index" />
-                    </Stack>
-                </QueryClientProvider>
-            </ClerkLoaded>
-        </ClerkProvider>
+        <GestureHandlerRootView style={{flex: 1}}>
+            <ClerkProvider tokenCache={tokenCache} publishableKey={publishableKey}>
+                <ClerkLoaded>
+                    <QueryClientProvider client={queryClient}>
+                        <StatusBar style="light" />
+                        <Stack screenOptions={{ headerShown: false }}>
+                            <Stack.Screen name="index" />
+                        </Stack>
+                    </QueryClientProvider>
+                </ClerkLoaded>
+            </ClerkProvider>
+        </GestureHandlerRootView>
     )
 }
 
