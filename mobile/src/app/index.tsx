@@ -4,6 +4,7 @@ import { Wallet } from 'lucide-react-native';
 import { useOAuth, useAuth } from '@clerk/clerk-expo';
 import * as WebBrowser from 'expo-web-browser';
 import * as Linking from 'expo-linking';
+import { Image } from 'expo-image';
 import { router } from 'expo-router';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
@@ -52,11 +53,11 @@ const Home = () => {
         <View style={styles.glow} />
 
         <View style={styles.content}>
-            <View style={styles.iconContainer}>
-                <Wallet stroke="#8B5CF6" strokeWidth={1.5} size={48} />
-            </View>
-
-            <Text style={styles.title}>Vaultora</Text>
+            <Image 
+                source={require('../../assets/images/logo.svg')} 
+                style={{ width: 300, height: 100, marginBottom: 12 }} 
+                contentFit="contain" 
+            />
             <Text style={styles.subtitle}>Independent Ledger</Text>
 
             <TouchableOpacity 

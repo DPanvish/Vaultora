@@ -163,7 +163,7 @@ const Dashboard = () => {
     <div className="p-4 md:p-8 max-w-6xl mx-auto w-full pt-12">
       <header className="flex flex-col sm:flex-row justify-between items-start sm:items-end mb-10 border-b border-white/[0.04] pb-8 gap-6">
         <div>
-          <h1 className="text-2xl font-semibold text-white tracking-tight">Vaultora</h1>
+          <img src="/logo.svg" alt="Vaultora Logo" className="h-10 object-contain mb-1" />
           <p className="text-gray-500 text-sm mt-1">Independent Living Ledger</p>
         </div>
         
